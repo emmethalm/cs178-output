@@ -2,7 +2,7 @@ import React from 'react';
 import Title from '../components/all/title/title';
 import Description from '../components/all/description/description';
 import MapComponent from '../components/all/map/map';
-import SearchManager from '../components/all/searching/SearchManager'; // Adjust the import path as necessary
+import SearchManager from '../components/all/searching/SearchManager'; 
 
 const Page = () => {
   return (

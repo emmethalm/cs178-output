@@ -1,10 +1,9 @@
-// Adjust the import statements to include ShuttleOptions
 'use client'
 
 import React, { useState } from 'react';
 import SearchBar from './search/search';
 import SearchDisplay from './results/results';
-import ShuttleOptions from './route options/route'; // Import the ShuttleOptions component
+import ShuttleOptions from './route options/route'; 
 
 const SearchManager = () => {
   const [destination, setDestination] = useState('');

@@ -1,4 +1,3 @@
-// components/Description.js
 function Description() {
     return (
       <p className="mt-2 text-base text-gray-600">

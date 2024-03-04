@@ -1,15 +1,15 @@
-// SearchManager.tsx
+// Adjust the import statements to include ShuttleOptions
 'use client'
 
 import React, { useState } from 'react';
-import SearchBar from './search/search'; // Adjust import paths as necessary
-import SearchDisplay from './results/results'; // Adjust import paths as necessary
+import SearchBar from './search/search';
+import SearchDisplay from './results/results';
+import ShuttleOptions from './route options/route'; // Import the ShuttleOptions component
 
 const SearchManager = () => {
   const [destination, setDestination] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
 
-  // Explicitly type the parameter as a string
   const handleSearchChange = (value: string) => {
     setDestination(value);
   };
@@ -25,7 +25,10 @@ const SearchManager = () => {
       {!searchSubmitted ? (
         <SearchBar onSearchChange={handleSearchChange} onSubmit={handleSubmit} />
       ) : (
-        <SearchDisplay toDestination={destination} />
+        <div>
+          <SearchDisplay toDestination={destination} />
+          <ShuttleOptions /> {/* Render ShuttleOptions here */}
+        </div>
       )}
     </div>
   );

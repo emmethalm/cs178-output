@@ -1,13 +1,24 @@
 'use client'
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet'; 
 
 const MapComponent = () => {
+  const [position, setPosition] = useState<L.LatLngExpression | null>(null);
 
-  // Ask for user location data
-  const position: L.LatLngExpression = [51.505, -0.09]; 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setPosition([position.coords.latitude, position.coords.longitude]);
+      console.log('Set custom location');
+    }, (error) => {
+      console.error("Error obtaining geolocation", error);
+    });
+  }, []);
+
+  if (!position) {
+    return null;
+  }
 
   return (
     <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>

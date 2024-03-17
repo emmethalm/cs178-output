@@ -8,7 +8,7 @@ interface SearchDisplayProps {
 
 const SearchDisplay: React.FC<SearchDisplayProps> = ({ toDestination }) => {
   // States to manage the input values
-  const [fromValue, setFromValue] = useState('Currier House');
+  const [fromValue, setFromValue] = useState('SEC');
   const [toValue, setToValue] = useState(toDestination);
 
   // Handle changes to the "From" input

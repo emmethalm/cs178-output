@@ -28,7 +28,7 @@ const MapComponent = () => {
       />
       <Marker position={position}>
         <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
+          Current location
         </Popup>
       </Marker>
     </MapContainer>

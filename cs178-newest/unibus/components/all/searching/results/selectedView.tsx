@@ -4,16 +4,16 @@
 'use client'
 import React from 'react';
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+// import { ModalBody } from './modalBody';
 
-export default function App() {
-  const {isOpen, onOpen, onClose} = useDisclosure();
+export default function SelectedView() {
+  const {onOpen, onClose} = useDisclosure();
   const modalPlacement = "bottom-center";
   
   return (
     <div className="flex flex-col gap-2">
       <Button onPress={onOpen} className="max-w-fit">Open Modal</Button>
       <Modal 
-        isOpen={isOpen} 
         placement={modalPlacement}
         onOpenChange={onClose} 
       >

@@ -7,7 +7,7 @@ import { Button } from "@nextui-org/react";
 
 export function ModalBody() {
   return (
-    <div className="fixed inset-0 z-10 overflow-y-auto">
+    <div className="relative inset-0 z-10 overflow-y-auto">
       <div className="flex min-h-full items-end justify-center p-4 text-center">
         <div className="relative w-full max-w-md transform overflow-hidden rounded-t-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
           <div className="mt-3 text-center sm:mt-0 sm:text-left">
@@ -56,9 +56,9 @@ export function ModalBody() {
                 </div>
               </div>
             </div>
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <Button variant="light">Close</Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -84,3 +84,4 @@ function CircleIcon(props: any) {
     </svg>
   )
 }
+

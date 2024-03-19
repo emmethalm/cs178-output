@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import AlertButton from "../alertButton";
 import Ticket from "../results/ticket";
 
-// Populate with live data
+// TODO: Fetch live data and calculate ShuttleOptions | calculate walking distance
 const ShuttleOptions = () => {
   const shuttleOptions = [
     { name: 'Quad SEC', eta: '5 mins', details: 'Potential traffic on Mass Ave' },

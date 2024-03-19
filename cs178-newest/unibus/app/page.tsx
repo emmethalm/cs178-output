@@ -5,6 +5,7 @@ import Title from '../components/all/title/title';
 import Description from '../components/all/description/description';
 import MapComponent from '../components/all/map/map';
 import SearchManager from '../components/all/searching/searchmanager'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Page = () => {
   return (

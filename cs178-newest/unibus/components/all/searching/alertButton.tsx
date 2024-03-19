@@ -1,4 +1,6 @@
 // Alert button to report delays
+"use client";
+
 import React, { useState } from 'react';
 
 const AlertButton: React.FC = () => {

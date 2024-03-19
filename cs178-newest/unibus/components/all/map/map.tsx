@@ -1,4 +1,5 @@
-'use client'
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -28,7 +29,7 @@ const MapComponent = () => {
       />
       <Marker position={position}>
         <Popup>
-          Current location
+          You are here!
         </Popup>
       </Marker>
     </MapContainer>

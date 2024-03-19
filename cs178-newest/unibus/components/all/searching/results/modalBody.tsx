@@ -19,25 +19,18 @@ export default function ModalBody() {
                     <span className="text-sm">ETA: 15 minutes</span>
                 </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 pt-2">
+                {/* Line behind the items */}
+                {/* TODO: Figure out how to get the line to render properly */}
+                {/* <div className="absolute left-5 top-0 w-px bg-black" style={{ height: `calc(40% - 1rem)` }}></div> */}
                 {stops.map((stop, index) => (
                     <div className="flex items-center" key={index}>
-                        <div className={`flex flex-col items-center mr-4 ${index !== 0 ? 'mt-6' : ''}`}>
-                            {/* Conditional rendering for before pseudo-element */}
-                            {index !== 0 && (
-                                <div className="w-px h-6 bg-black before:absolute before:top-0 before:left-1/2 before:-mt-6 before:w-px before:h-6 before:bg-black"></div>
-                            )}
+                        {/* Ensure the line extends fully from the first to the last item */}
+                        <div className={`flex flex-col items-center mr-4`}>
                             <div className="w-3 h-3 bg-black rounded-full relative z-10"></div>
-                            {/* Conditional rendering for after pseudo-element */}
-                            {index !== stops.length - 1 && (
-                                <div className="w-px h-6 bg-black after:absolute after:bottom-0 after:left-1/2 after:mb-6 after:w-px after:h-6 after:bg-black"></div>
-                            )}
                         </div>
-                        <div className="flex justify-between w-full">
-                            <div>
-                                <div className="font-bold">{stop.name}</div>
-                                <div className="text-sm text-gray-500">{index === 0 ? 'Next up' : ''}</div>
-                            </div>
+                        <div className="flex-1 flex justify-between">
+                            <div className="font-bold">{stop.name}</div>
                             <div className="font-bold">{stop.time}</div>
                         </div>
                     </div>
@@ -46,4 +39,3 @@ export default function ModalBody() {
         </div>
     );
 }
-

@@ -5,13 +5,6 @@ import { ModalBody } from '../results/modalBody';
 import AlertButton from "../alertButton";
 import { useDisclosure } from "react-use-disclosure";
 
-const {
-  isOpen: isModalOpen,
-  open: openModal,
-  close: closeModal
-} = useDisclosure();
-
-
 const ShuttleOptions = () => {
   // Populate with real data
   const shuttleOptions = [

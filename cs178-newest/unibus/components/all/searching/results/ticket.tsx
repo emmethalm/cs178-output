@@ -1,7 +1,7 @@
 // ticket.tsx
 import React from 'react';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import { ModalBody } from './modalBody';
+import ModalBody from './modalBody';
 
 type ContentProps = {
     name: string;

@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ModalBody } from '../results/modalBody';
 import AlertButton from "../alertButton";
-import { useDisclosure } from "react-use-disclosure";
 import Ticket from "../results/ticket";
 
+// Populate with live data
 const ShuttleOptions = () => {
   const shuttleOptions = [
     { name: 'Quad SEC', eta: '5 mins', details: 'Potential traffic on Mass Ave' },
@@ -14,6 +13,7 @@ const ShuttleOptions = () => {
   ];
 
   const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
+
   return (
     <div className="mt-4">
       <h3 className="text-lg font-semibold mb-2 text-black">Shuttle Options</h3>

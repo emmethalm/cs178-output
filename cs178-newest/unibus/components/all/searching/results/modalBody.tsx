@@ -2,7 +2,9 @@
  * v0 by Vercel.
  * @see https://v0.dev/t/kwxkhHhYDQd
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
+ * 
  */
+"use client";
 export function ModalBody() {
   return (
     <div className="relative inset-0 z-10 overflow-y-auto w-full">

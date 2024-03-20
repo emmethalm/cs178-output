@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import AlertButton from "../alertButton";
 import Ticket from "../results/ticket";
 
+// Added interface types to bypass TS errors
+
 interface ShuttleOption {
   name: string;
   eta: string;
@@ -15,7 +17,7 @@ interface StopTimeUpdate {
   arrival: {
     time: number;
   };
-  trip_id?: string; // Optional because it will be added later
+  trip_id?: string;
 }
 
 interface TripUpdateEntity {
@@ -47,7 +49,7 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
         const { stopId } = await stopResponse.json();
 
         // Now fetch the trip updates from the external API
-        const tripUpdatesResponse = await fetch('https://passio3.com/harvard/passioTransit/gtfs/realtime/tripUpdates.json');
+        const tripUpdatesResponse = await fetch('https://passio3.com/harvard/passioTransit/gtfs/realtime/tripUpdates');
         const tripUpdatesData: ApiResponse = await tripUpdatesResponse.json();
 
         // Filter the updates by stop_id and order by arrival time, then take the top 3
@@ -69,10 +71,10 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
       }
     };
 
-    const intervalId = setInterval(fetchShuttles, 30000); // Refresh every 30 seconds
-    fetchShuttles(); // Also fetch immediately
+    const intervalId = setInterval(fetchShuttles, 30000);
+    fetchShuttles();
 
-    return () => clearInterval(intervalId); // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
   }, [stopName]);
 
   // Transform shuttles data into a format for displaying

@@ -3,13 +3,15 @@
 import React, { useState } from 'react';
 import SearchBar from './search/search';
 import SearchDisplay from './results/results';
-import ShuttleOptions from './route options/route'; 
+import ShuttleInfo from './route options/route'; 
 
 const SearchManager = () => {
   const [destination, setDestination] = useState('');
+  const [stopName, setStopName] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
 
   const handleSearchChange = (value: string) => {
+    setStopName(value);
     setDestination(value);
   };
 
@@ -26,7 +28,8 @@ const SearchManager = () => {
       ) : (
         <div>
           <SearchDisplay toDestination={destination} />
-          <ShuttleOptions /> {/* Render ShuttleOptions here */}
+          {/* TODO: stopName value here */}
+          <ShuttleInfo stopName={stopName} /> {/* Render ShuttleOptions here */}
         </div>
       )}
     </div>

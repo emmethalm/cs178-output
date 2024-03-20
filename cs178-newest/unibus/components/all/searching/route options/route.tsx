@@ -5,12 +5,16 @@ import AlertButton from "../alertButton";
 import Ticket from "../results/ticket";
 
 // TODO: Fetch live data and calculate ShuttleOptions | calculate walking distance
+
+// TODO: getShuttleOptions(pickup_stop, target_stop) --> return three soonest routes
 const ShuttleOptions = () => {
   const shuttleOptions = [
     { name: 'Quad SEC', eta: '5 mins', details: 'Potential traffic on Mass Ave' },
     { name: 'Quad Yard Express', eta: '8 mins'},
     { name: '1161 Bus', eta: '12 mins' },
   ];
+
+  // TODO: getWalkingDistance(pickup_stop, target_stop) --> return walking distance using open maps
 
   const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
 

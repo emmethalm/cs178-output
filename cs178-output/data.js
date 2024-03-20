@@ -1,5 +1,5 @@
 import React from "react";
-export const animals = [
+export const stops = [
     {label: "SEC", value: "SEC"},
     {label: "Harvard Business School", value: "Harvard Business School"},
     {label: "Harvard Kennedy School", value: "Harvard Kennedy School"},

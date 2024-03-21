@@ -36,6 +36,8 @@ interface ApiResponse {
 interface ShuttleProps {
   stopName: string;
 }
+// Error: stopName undefined | make sure I'm passing this in a prop from 
+
 
 export default function ShuttleInfo({ stopName }: ShuttleProps) {
   const [shuttles, setShuttles] = useState<StopTimeUpdate[]>([]);

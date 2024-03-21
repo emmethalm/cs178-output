@@ -9,10 +9,10 @@ const db = new sqlite3.Database(dbPath);
 
 // Define your .txt files location
 const dataFiles = {
+  trips: '../liveData/trips.txt',
   calendar_dates: '../liveData/calendar_dates.txt',
   stop_times: '../liveData/stop_times.txt',
   shapes: '../liveData/shapes.txt',
-  trips: '../liveData/trips.txt',
   stops: '../liveData/stops.txt',
   calendar: '../liveData/calendar.txt',
   routes: '../liveData/routes.txt',
@@ -20,6 +20,18 @@ const dataFiles = {
 
 // SQL to create tables if they don't exist
 const createTableSQL = {
+  trips: `CREATE TABLE IF NOT EXISTS trips (
+    route_id TEXT,
+    service_id TEXT,
+    trip_id TEXT,
+    trip_headsign TEXT,
+    trip_short_name TEXT,
+    direction_id INTEGER,
+    block_id TEXT,
+    shape_id TEXT,
+    wheelchair_accessible INTEGER,
+    bikes_allowed INTEGER
+  );`,
   calendar_dates: `CREATE TABLE IF NOT EXISTS calendar_dates (
     service_id TEXT,
     date TEXT,
@@ -41,18 +53,6 @@ const createTableSQL = {
     shape_pt_lat REAL,
     shape_pt_lon REAL,
     shape_pt_sequence INTEGER,
-  );`,
-  trips: `CREATE TABLE IF NOT EXISTS trips (
-    route_id TEXT,
-    service_id TEXT,
-    trip_id TEXT,
-    trip_headsign TEXT,
-    trip_short_name TEXT,
-    direction_id INTEGER,
-    block_id TEXT,
-    shape_id TEXT
-    wheelchair_accessible INTEGER,
-    bikes_allowed INTEGER
   );`,
   stops: `CREATE TABLE IF NOT EXISTS stops (
     stop_id TEXT PRIMARY KEY,

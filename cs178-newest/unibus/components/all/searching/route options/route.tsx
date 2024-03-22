@@ -71,8 +71,18 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
               details: arrivalTime ? `Arriving at ${new Date(arrivalTime * 1000).toLocaleTimeString()}` : 'Arrival time unknown'
             };
           })
-          .sort((a, b) => (a.eta === 'Unknown' ? Number.MAX_SAFE_INTEGER : new Date(a.eta).getTime()) - (b.eta === 'Unknown' ? Number.MAX_SAFE_INTEGER : new Date(b.eta).getTime()))
-          .slice(0, 3);
+          .sort((a, b) => {
+            // Both ETAs are known, compare them directly
+            if (a.eta !== 'Unknown' && b.eta !== 'Unknown') {
+              return new Date(a.eta).getTime() - new Date(b.eta).getTime();
+            }
+            // Push shuttles with 'Unknown' ETA to the end
+            if (a.eta === 'Unknown') return 1;
+            if (b.eta === 'Unknown') return -1;
+            // Default case (shouldn't really happen, but just for completeness)
+            return 0;
+          })
+          
 
         setShuttleOptions(relevantUpdates);
       } catch (error) {

@@ -1,90 +1,97 @@
+// TODO: return each part needed to display upcoming routes for a given stop
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import AlertButton from "../alertButton";
 import Ticket from "../results/ticket";
 
-// Added interface types to bypass TS errors
-
-interface ShuttleOption {
+interface ShuttleOptions {
   name: string;
   eta: string;
   details: string;
 }
 
-interface StopTimeUpdate {
-  stop_id: string;
-  arrival: {
-    time: number;
-  };
-  trip_id?: string;
-}
-
-interface TripUpdateEntity {
-  trip_update: {
-    trip: {
-      trip_id: string;
-    };
-    stop_time_update: StopTimeUpdate[];
-  };
-}
-
 interface ApiResponse {
-  entity: TripUpdateEntity[];
+  entity: {
+    id: string;
+    is_deleted: boolean;
+    trip_update: {
+      stop_time_update: {
+        stop_id: string;
+        arrival: {
+          time: number;
+        };
+      }[];
+      trip: {
+        trip_id: string;
+        route_id: string;
+      };
+    };
+  }[];
 }
 
 interface ShuttleProps {
   stopName: string;
 }
-// Error: stopName undefined | make sure I'm passing this in a prop from 
-
 
 export default function ShuttleInfo({ stopName }: ShuttleProps) {
-  const [shuttles, setShuttles] = useState<StopTimeUpdate[]>([]);
   const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
+  const [shuttleOptions, setShuttleOptions] = useState<ShuttleOptions[]>([]);
 
   useEffect(() => {
     const fetchShuttles = async () => {
       try {
-        // Get the stop_id from your local database via the API route
         const stopResponse = await fetch(`/api/getShuttleOptions?stop_name=${stopName}`);
-        const { stopId } = await stopResponse.json();
+        if (!stopResponse.ok) {
+          throw new Error(`HTTP error! status: ${stopResponse.status}`);
+        }
+        const stopData = await stopResponse.json();
+        if (!stopData || !stopData.stopId) {
+          throw new Error("stopId not found in response");
+        }
+        const { stopId } = stopData;
 
-        // Now fetch the trip updates from the external API
-        const tripUpdatesResponse = await fetch('https://passio3.com/harvard/passioTransit/gtfs/realtime/tripUpdates');
+        const tripUpdatesUrl = 'https://passio3.com/harvard/passioTransit/gtfs/realtime/tripUpdates.json';
+        const tripUpdatesResponse = await fetch(tripUpdatesUrl);
+        if (!tripUpdatesResponse.ok) {
+          throw new Error(`HTTP error! status: ${tripUpdatesResponse.status}`);
+        }
         const tripUpdatesData: ApiResponse = await tripUpdatesResponse.json();
 
-        // Filter the updates by stop_id and order by arrival time, then take the top 3
-        const relevantShuttles: StopTimeUpdate[] = tripUpdatesData.entity
-          .flatMap((entity) =>
-            entity.trip_update.stop_time_update
-              .filter((update) => update.stop_id === stopId)
-              .map((update) => ({
-                ...update,
-                trip_id: entity.trip_update.trip.trip_id, // Include trip_id for reference
-              }))
-          )
-          .sort((a, b) => b.arrival.time - a.arrival.time) // Sort by arrival time descending
-          .slice(0, 3); // Get the top 3 results
+        const relevantUpdates = tripUpdatesData.entity
+          .filter(entity => !entity.is_deleted)
+          .map(entity => entity.trip_update)
+          .filter(update => update.stop_time_update.some(stu => stu.stop_id === stopId))
+          .map(update => {
+            const arrivalTime = update.stop_time_update.find(stu => stu.stop_id === stopId)?.arrival?.time;
+            return {
+              name: update.trip.route_id,
+              eta: arrivalTime ? new Date(arrivalTime * 1000).toLocaleTimeString() : 'Unknown',
+              details: arrivalTime ? `Arriving at ${new Date(arrivalTime * 1000).toLocaleTimeString()}` : 'Arrival time unknown'
+            };
+          })
+          .sort((a, b) => {
+            // Both ETAs are known, compare them directly
+            if (a.eta !== 'Unknown' && b.eta !== 'Unknown') {
+              return new Date(a.eta).getTime() - new Date(b.eta).getTime();
+            }
+            // Push shuttles with 'Unknown' ETA to the end
+            if (a.eta === 'Unknown') return 1;
+            if (b.eta === 'Unknown') return -1;
+            // Default case (shouldn't really happen, but just for completeness)
+            return 0;
+          })
+          
 
-        setShuttles(relevantShuttles);
+        setShuttleOptions(relevantUpdates);
       } catch (error) {
-        console.error('Failed to fetch shuttle options:', error);
+        console.error("Failed to fetch shuttle info:", error);
       }
     };
 
-    const intervalId = setInterval(fetchShuttles, 30000);
     fetchShuttles();
-
-    return () => clearInterval(intervalId);
   }, [stopName]);
-
-  // Transform shuttles data into a format for displaying
-  const shuttleOptions: ShuttleOption[] = shuttles.map((shuttle) => ({
-    name: `Trip ID: ${shuttle.trip_id}`, // Replace with real name if available
-    eta: `${Math.round((shuttle.arrival.time - Math.floor(Date.now() / 1000)) / 60)} mins`,
-    details: `Arriving at: ${new Date(shuttle.arrival.time * 1000).toLocaleTimeString()}`, // Add any other details if available
-  }));
 
   return (
     <div className="mt-4">

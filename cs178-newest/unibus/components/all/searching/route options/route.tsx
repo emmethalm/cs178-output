@@ -1,5 +1,4 @@
 // TODO: return each part needed to display upcoming routes for a given stop
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -42,6 +41,7 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
   useEffect(() => {
     const fetchShuttles = async () => {
       try {
+        // Gets stop ID from name
         const stopResponse = await fetch(`/api/getShuttleOptions?stop_name=${stopName}`);
         if (!stopResponse.ok) {
           throw new Error(`HTTP error! status: ${stopResponse.status}`);
@@ -52,6 +52,7 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
         }
         const { stopId } = stopData;
 
+        // Get all trip update data
         const tripUpdatesUrl = 'https://passio3.com/harvard/passioTransit/gtfs/realtime/tripUpdates.json';
         const tripUpdatesResponse = await fetch(tripUpdatesUrl);
         if (!tripUpdatesResponse.ok) {
@@ -59,30 +60,45 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
         }
         const tripUpdatesData: ApiResponse = await tripUpdatesResponse.json();
 
+        console.log("Trip updates data fetched:", tripUpdatesData);
+
         const relevantUpdates = tripUpdatesData.entity
-          .filter(entity => !entity.is_deleted)
-          .map(entity => entity.trip_update)
-          .filter(update => update.stop_time_update.some(stu => stu.stop_id === stopId))
-          .map(update => {
-            const arrivalTime = update.stop_time_update.find(stu => stu.stop_id === stopId)?.arrival?.time;
-            return {
-              name: update.trip.route_id,
-              eta: arrivalTime ? new Date(arrivalTime * 1000).toLocaleTimeString() : 'Unknown',
-              details: arrivalTime ? `Arriving at ${new Date(arrivalTime * 1000).toLocaleTimeString()}` : 'Arrival time unknown'
-            };
-          })
-          .sort((a, b) => {
-            // Both ETAs are known, compare them directly
-            if (a.eta !== 'Unknown' && b.eta !== 'Unknown') {
-              return new Date(a.eta).getTime() - new Date(b.eta).getTime();
-            }
-            // Push shuttles with 'Unknown' ETA to the end
-            if (a.eta === 'Unknown') return 1;
-            if (b.eta === 'Unknown') return -1;
-            // Default case (shouldn't really happen, but just for completeness)
-            return 0;
-          })
-          
+        .map(entity => {
+          const mappedEntity = {
+            ...entity.trip_update,
+            tripId: entity.trip_update.trip.trip_id,
+          };
+          console.log("Mapped entity:", mappedEntity);
+          return mappedEntity;
+        })
+        // Inside your .filter() function
+        .filter(update => {
+          console.log('Looking for stopId:', stopId);
+          console.log('Available stopIds in update:', update.stop_time_update.map(stu => stu.stop_id));
+          const isRelevant = update.stop_time_update.some(stu => stu.stop_id === stopId);
+          console.log(`Is update with tripId ${update.tripId} relevant for stopId ${stopId}:`, isRelevant);
+          return isRelevant;
+        })
+        .map(update => {
+          const arrivalTime = update.stop_time_update.find(stu => stu.stop_id === stopId)?.arrival?.time;
+          const shuttleOption = {
+            name: update.tripId, // Assuming you want to display the trip ID as 'name', adjust as needed
+            eta: arrivalTime ? new Date(arrivalTime * 1000).toLocaleTimeString() : 'Unknown',
+            details: arrivalTime ? `Arriving at ${new Date(arrivalTime * 1000).toLocaleTimeString()}` : 'Arrival time unknown'
+          };
+          console.log("Shuttle option:", shuttleOption);
+          return shuttleOption;
+        })
+        .sort((a, b) => {
+          // Adjusted sorting logic
+          const timeA = a.eta !== 'Unknown' ? new Date(a.eta).getTime() : Number.MAX_SAFE_INTEGER;
+          const timeB = b.eta !== 'Unknown' ? new Date(b.eta).getTime() : Number.MAX_SAFE_INTEGER;
+          console.log(`Comparing ETA times: ${a.eta} (${timeA}) with ${b.eta} (${timeB})`);
+          return timeA - timeB;
+        })
+        .slice(0, 3);
+
+        console.log("Relevant updates after sorting and slicing:", relevantUpdates);
 
         setShuttleOptions(relevantUpdates);
       } catch (error) {

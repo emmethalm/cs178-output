@@ -1,31 +1,55 @@
-export default function ModalBody() {
-    // Replace with live data
-    const stops = [
-        { name: 'Stop 1', time: '5 mins' },
-        { name: 'Stop 2', time: '10 mins' },
-        { name: 'Stop 3', time: '15 mins' },
-        { name: 'Stop 4', time: '20 mins' },
-    ];
+import React, { useEffect, useState } from 'react';
 
-    return (
-        <div className="max-w-sm mx-auto">
-            <div className="space-y-4 pt-2">
-                {/* Line behind the items */}
-                {/* TODO: Figure out how to get the line to render properly */}
-                {/* <div className="absolute left-5 top-0 w-px bg-black" style={{ height: `calc(40% - 1rem)` }}></div> */}
-                {stops.map((stop, index) => (
-                    <div className="flex items-center" key={index}>
-                        {/* Ensure the line extends fully from the first to the last item */}
-                        <div className={`flex flex-col items-center mr-4`}>
-                            <div className="w-3 h-3 bg-black rounded-full relative z-10"></div>
-                        </div>
-                        <div className="flex-1 flex justify-between">
-                            <div className="font-bold">{stop.name}</div>
-                            <div className="font-bold">{stop.time}</div>
-                        </div>
-                    </div>
-                ))}
+interface ModalBodyProps {
+  currentStopName: string;
+  destinationStopName: string;
+}
+
+export default function ModalBody({ currentStopName, destinationStopName }: ModalBodyProps) {
+  const [stops, setStops] = useState<{ name: string; time: string }[]>([]);
+
+  useEffect(() => {
+    const fetchStopsAndTimes = async () => {
+      // Assuming there's an API endpoint to get the stops between current and destination
+      const response = await fetch(`/api/getStopsBetween?current=${currentStopName}&destination=${destinationStopName}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch stops');
+      }
+      const stopsData = await response.json();
+      const stopsWithTimes = await Promise.all(stopsData.map(async (stop: { name: string; trip_id: string }) => {
+        const etaResponse = await fetch(`/api/getETA?trip_id=${stop.trip_id}`);
+        if (!etaResponse.ok) {
+          throw new Error('Failed to fetch ETA');
+        }
+        const etaData = await etaResponse.json();
+        const currentTime = Date.now();
+        const timeDifference = Math.round((etaData.eta - currentTime) / 60000); // Convert milliseconds to minutes
+        return {
+          name: stop.name,
+          time: `${timeDifference} mins`
+        };
+      }));
+      setStops(stopsWithTimes);
+    };
+
+    fetchStopsAndTimes();
+  }, [currentStopName, destinationStopName]);
+
+  return (
+    <div className="max-w-sm mx-auto">
+      <div className="space-y-4 pt-2">
+        {stops.map((stop, index) => (
+          <div className="flex items-center" key={index}>
+            <div className={`flex flex-col items-center mr-4`}>
+              <div className="w-3 h-3 bg-black rounded-full relative z-10"></div>
             </div>
-        </div>
-    );
+            <div className="flex-1 flex justify-between">
+              <div className="font-bold">{stop.name}</div>
+              <div className="font-bold">{stop.time}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

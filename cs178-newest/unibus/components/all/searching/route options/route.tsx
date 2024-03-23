@@ -82,7 +82,7 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
         .map(update => {
           const arrivalTime = update.stop_time_update.find(stu => stu.stop_id === stopId)?.arrival?.time;
           const shuttleOption = {
-            name: update.tripId, // Assuming you want to display the trip ID as 'name', adjust as needed
+            name: update.tripId, // TODO: api/getRouteIdForTripId --> match to the correct route_long_name in the routes db
             eta: arrivalTime ? new Date(arrivalTime * 1000).toLocaleTimeString() : 'Unknown',
             details: arrivalTime ? `Arriving at ${new Date(arrivalTime * 1000).toLocaleTimeString()}` : 'Arrival time unknown'
           };

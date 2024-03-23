@@ -60,45 +60,55 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
         }
         const tripUpdatesData: ApiResponse = await tripUpdatesResponse.json();
 
-        console.log("Trip updates data fetched:", tripUpdatesData);
+        // Filter and map the updates to fetch additional route details
+        const updatesPromises = tripUpdatesData.entity
+          .filter(entity => !entity.is_deleted)
+          .filter(entity => entity.trip_update.stop_time_update.some(stu => stu.stop_id === stopId))
+          .map(async entity => {
+            const tripId = entity.trip_update.trip.trip_id;
+            const arrivalTimeUpdate = entity.trip_update.stop_time_update.find(stu => stu.stop_id === stopId);
+            const arrivalTime = arrivalTimeUpdate ? new Date(arrivalTimeUpdate.arrival.time * 1000).toLocaleTimeString() : 'Unknown';
 
-        const relevantUpdates = tripUpdatesData.entity
-        .map(entity => {
-          const mappedEntity = {
-            ...entity.trip_update,
-            tripId: entity.trip_update.trip.trip_id,
-          };
-          console.log("Mapped entity:", mappedEntity);
-          return mappedEntity;
-        })
-        // Inside your .filter() function
-        .filter(update => {
-          console.log('Looking for stopId:', stopId);
-          console.log('Available stopIds in update:', update.stop_time_update.map(stu => stu.stop_id));
-          const isRelevant = update.stop_time_update.some(stu => stu.stop_id === stopId);
-          console.log(`Is update with tripId ${update.tripId} relevant for stopId ${stopId}:`, isRelevant);
-          return isRelevant;
-        })
-        .map(update => {
-          const arrivalTime = update.stop_time_update.find(stu => stu.stop_id === stopId)?.arrival?.time;
-          const shuttleOption = {
-            name: update.tripId, // TODO: api/getRouteIdForTripId --> match to the correct route_long_name in the routes db
-            eta: arrivalTime ? new Date(arrivalTime * 1000).toLocaleTimeString() : 'Unknown',
-            details: arrivalTime ? `Arriving at ${new Date(arrivalTime * 1000).toLocaleTimeString()}` : 'Arrival time unknown'
-          };
-          console.log("Shuttle option:", shuttleOption);
-          return shuttleOption;
-        })
-        .sort((a, b) => {
-          // Adjusted sorting logic
-          const timeA = a.eta !== 'Unknown' ? new Date(a.eta).getTime() : Number.MAX_SAFE_INTEGER;
-          const timeB = b.eta !== 'Unknown' ? new Date(b.eta).getTime() : Number.MAX_SAFE_INTEGER;
-          console.log(`Comparing ETA times: ${a.eta} (${timeA}) with ${b.eta} (${timeB})`);
-          return timeA - timeB;
-        })
-        .slice(0, 3);
+            // Fetch route ID using the trip ID
+            const routeIdResponse = await fetch(`/api/getRouteIdForTripId?trip_id=${tripId}`);
+            if (!routeIdResponse.ok) {
+              throw new Error(`HTTP error! status: ${routeIdResponse.status}`);
+            }
+            const routeIdData = await routeIdResponse.json();
 
-        console.log("Relevant updates after sorting and slicing:", relevantUpdates);
+            // Assuming routeIdData contains the route ID and this is the primary key in your routes table
+            const routeId = routeIdData.route_id;
+
+            // Fetch the route_long_name using the route ID and log the output
+            const routeNameResponse = await fetch(`/api/getRouteLongName?route_id=${routeId}`);
+            if (!routeNameResponse.ok) {
+              throw new Error(`HTTP error! status: ${routeNameResponse.status}`);
+            }
+            const routeNameData = await routeNameResponse.json();
+            console.log(`Route Name Data:`, routeNameData);
+
+            // Assuming routeNameData contains a field for route_long_name
+            const routeLongName = routeNameData.route_long_name;
+            console.log("routeLongName:", routeLongName);
+
+            return {
+              name: routeLongName,
+              eta: arrivalTime,
+              details: arrivalTime === 'Unknown' ? 'Arrival time unknown' : `Arriving at ${arrivalTime}`
+            };
+          });
+
+        // Resolve all the promises from the mapping
+        const updatesWithRouteNames = await Promise.all(updatesPromises);
+
+        // Sort and slice the updates
+        const relevantUpdates = updatesWithRouteNames
+          .sort((a, b) => {
+            const timeA = a.eta !== 'Unknown' ? new Date(a.eta).getTime() : Number.MAX_SAFE_INTEGER;
+            const timeB = b.eta !== 'Unknown' ? new Date(b.eta).getTime() : Number.MAX_SAFE_INTEGER;
+            return timeA - timeB;
+          })
+          .slice(0, 3);
 
         setShuttleOptions(relevantUpdates);
       } catch (error) {

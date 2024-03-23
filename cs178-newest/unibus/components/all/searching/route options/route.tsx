@@ -123,7 +123,7 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
 
   return (
     <div className="mt-4">
-      <h3 className="text-lg font-semibold mb-2 text-black">Shuttle Options</h3>
+      <h3 className="text-lg font-semibold mb-2 text-black">Upcoming Shuttles</h3>
       {shuttleOptions.length === 0 ? (
         <div className="text-black">No shuttles available at this time</div>
       ) : (
@@ -134,9 +134,9 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
               className={`mb-2 p-2 border border-gray-300 rounded-lg hover:bg-gray-200 ${selectedRoute === index ? 'bg-gray-300' : ''}`}
               onClick={() => setSelectedRoute(index)}
             >
-              <p><strong>Name:</strong> {option.name}</p>
-              <p><strong>ETA:</strong> {option.eta}</p>
-              <p><strong>Details:</strong> {option.details}</p>
+              <p><strong>Bus:</strong> {option.name}</p>
+              <p><strong>Arrives:</strong> {option.eta}</p>
+              {/* <p><strong>Details:</strong> {option.details}</p> */}
               <AlertButton />
             </button>
           ))}

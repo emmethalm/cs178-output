@@ -12,16 +12,16 @@ const Page = () => {
   return (
     <div className="relative min-h-screen bg-gray-100 flex">
       {/* Left half container */}
-      <div className="flex-1 flex flex-col p-8 relative"> {/* Added relative positioning here */}
+      <div className="flex-1 flex flex-col p-8 relative">
         {/* Container for title, description, and search to center them horizontally */}
         <div className="w-full flex flex-col items-center">
           <Title />
           <Description />
-          <SearchManager /> {/* Use SearchManager here */}
+          <SearchManager />
         </div>
         {/* Privacy component added to bottom left */}
         <div className="absolute bottom-0 left-0 p-4">
-          <Privacy /> {/* Your Privacy component goes here */}
+          <Privacy />
         </div>
       </div>
       {/* Right half container for the map */}

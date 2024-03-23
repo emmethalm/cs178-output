@@ -1,4 +1,5 @@
 export default function ModalBody() {
+    // Replace with live data
     const stops = [
         { name: 'Stop 1', time: '5 mins' },
         { name: 'Stop 2', time: '10 mins' },
@@ -8,17 +9,6 @@ export default function ModalBody() {
 
     return (
         <div className="max-w-sm mx-auto">
-            <div className="text-center mb-6">
-                <h1 className="text-lg font-semibold">Your Ride</h1>
-            </div>
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center space-x-2">
-                    <span className="text-lg font-bold">Bus name</span>
-                </div>
-                <div className="px-4 py-2 bg-gray-200 rounded-full">
-                    <span className="text-sm">ETA: 15 minutes</span>
-                </div>
-            </div>
             <div className="space-y-4 pt-2">
                 {/* Line behind the items */}
                 {/* TODO: Figure out how to get the line to render properly */}

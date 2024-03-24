@@ -11,6 +11,11 @@ interface ShuttleOptions {
   details: string;
 }
 
+interface ShuttleProps {
+  stopName: string;
+  onShuttleSelect?: (option: ShuttleOptions) => void;
+}
+
 interface ApiResponse {
   entity: {
     id: string;
@@ -28,10 +33,6 @@ interface ApiResponse {
       };
     };
   }[];
-}
-
-interface ShuttleProps {
-  stopName: string;
 }
 
 export default function ShuttleInfo({ stopName }: ShuttleProps) {
@@ -147,6 +148,9 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
           show={true}
           onClose={() => setSelectedRoute(null)}
           content={shuttleOptions[selectedRoute]}
+          // Not sure if I need these
+          currentStopName={stopName}
+          destinationStopName={}
         />
       )}
     </div>

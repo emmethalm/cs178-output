@@ -5,12 +5,15 @@ import SearchBar from './search/search';
 import SearchDisplay from './results/results';
 import ShuttleInfo from './route options/route'; 
 import Ticket from './results/ticket';
+import { ShuttleOptions } from './route options/route';
 
 const SearchManager = () => {
   const [destination, setDestination] = useState('');
   const [stopName, setStopName] = useState('');
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [showTicket, setShowTicket] = useState(false);
+  const [selectedShuttleOption, setSelectedShuttleOption] = useState<ShuttleOptions | null>(null);
+
 
   useEffect(() => {
     console.log('Updated stopName and destination:', stopName, destination);
@@ -31,6 +34,11 @@ const SearchManager = () => {
     }
   };
 
+  const handleShuttleSelect = (option: ShuttleOptions) => {
+    setSelectedShuttleOption(option);
+    setShowTicket(true); // Show the ticket when a shuttle option is selected
+  };
+
   useEffect(() => {
     // By putting searchSubmitted at the end of the dependency array, we ensure that this useEffect
     // runs after the stopName and destination states have been updated.
@@ -47,22 +55,25 @@ const SearchManager = () => {
         <SearchBar onSearchChange={handleSearchChange} onSubmit={handleSubmit} />
       ) : (
         <div>
-          <SearchDisplay toDestination={destination} />
-          <ShuttleInfo stopName={stopName} />
-          {showTicket && (
-            <Ticket
-              show={showTicket}
-              onClose={() => {
-                setShowTicket(false);
-                setSearchSubmitted(false); // Resetting searchSubmitted allows the user to search again
-              }}
-              content={{ name: '', eta: '' }} // Placeholder content, should be replaced with actual data
-              currentStopName={stopName}
-              destinationStopName={destination}
-            />
-          )}
-        </div>
+        <SearchDisplay toDestination={destination} />
+        <ShuttleInfo stopName={stopName} onShuttleSelect={handleShuttleSelect} />
+        {showTicket && selectedShuttleOption && (
+          <Ticket
+            show={showTicket}
+            onClose={() => {
+              setShowTicket(false);
+              setSearchSubmitted(false);
+              setSelectedShuttleOption(null); // Reset the selected shuttle option
+            }}
+            content={selectedShuttleOption}
+            currentStopName={stopName}
+            destinationStopName={destination}
+          />
+        )}
+      </div>
       )}
     </div>
   );
 };
+
+export default SearchManager;

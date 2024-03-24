@@ -2,6 +2,7 @@
 import React from 'react';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import ModalBody from './modalBody';
+import SearchDisplay from './results';
 
 type ContentProps = {
     name: string;
@@ -13,6 +14,8 @@ type ContentProps = {
     show: boolean;
     onClose: () => void;
     content: ContentProps;
+    currentStopName: string;
+    destinationStopName: string;
   };
   
   const Ticket = ({ show, onClose, content }: TicketProps) => {
@@ -28,7 +31,10 @@ type ContentProps = {
         <p><strong>Bus:</strong> {content.name}</p>
         <p><strong>Arrives:</strong> {content.eta}</p>
         {/* {content.details && <p><strong>Details:</strong> {content.details}</p>} */}
-        <ModalBody />
+
+        {/* TODO: make responsive from not just SEC | pass current and destination as props */}
+
+        <ModalBody currentStopName={} destinationStopName={} />
       </Offcanvas.Body>
     </Offcanvas>
   );

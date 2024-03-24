@@ -17,8 +17,10 @@ type ContentProps = {
     currentStopName: string;
     destinationStopName: string;
   };
-  
+
   const Ticket: React.FC<TicketProps> = ({ show, onClose, content, currentStopName, destinationStopName }) => {
+    // This is printing undefined
+    console.log('Ticket Props:', currentStopName, destinationStopName); // Debugging
     const scroll = true;
     const backdrop = false;
 

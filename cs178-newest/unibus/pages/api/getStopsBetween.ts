@@ -24,8 +24,8 @@ interface ApiResponse {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log(req.query);
   const { currentStopName, destinationStopName } = req.query;
-
   if (!currentStopName || !destinationStopName) {
     res.status(400).json({ error: 'Missing currentStopName or destinationStopName query parameters' });
     return;

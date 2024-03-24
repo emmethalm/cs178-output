@@ -25,17 +25,19 @@ const SearchManager = () => {
   };
 
   const handleSubmit = () => {
+    console.log('handleSubmit called');
     if (destination.trim() !== '' && stopName.trim() !== '') {
-      setSearchSubmitted(true);
-      setShowTicket(true);
+      setSearchSubmitted(true); // This will trigger the useEffect below
     }
   };
 
   useEffect(() => {
-    if (searchSubmitted && destination && stopName) {
+    // By putting searchSubmitted at the end of the dependency array, we ensure that this useEffect
+    // runs after the stopName and destination states have been updated.
+    if (searchSubmitted) {
       setShowTicket(true);
     }
-  }, [searchSubmitted, destination, stopName]);
+  }, [destination, stopName, searchSubmitted]);
 
   console.log('Before Ticket:', stopName, destination);
 
@@ -47,10 +49,13 @@ const SearchManager = () => {
         <div>
           <SearchDisplay toDestination={destination} />
           <ShuttleInfo stopName={stopName} />
-          {showTicket && destination && stopName && (
+          {showTicket && (
             <Ticket
               show={showTicket}
-              onClose={() => setShowTicket(false)}
+              onClose={() => {
+                setShowTicket(false);
+                setSearchSubmitted(false); // Resetting searchSubmitted allows the user to search again
+              }}
               content={{ name: '', eta: '' }} // Placeholder content, should be replaced with actual data
               currentStopName={stopName}
               destinationStopName={destination}
@@ -61,5 +66,3 @@ const SearchManager = () => {
     </div>
   );
 };
-
-export default SearchManager;

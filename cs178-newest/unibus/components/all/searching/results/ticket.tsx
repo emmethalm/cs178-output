@@ -18,7 +18,7 @@ type ContentProps = {
     destinationStopName: string;
   };
   
-  const Ticket = ({ show, onClose, content }: TicketProps) => {
+  const Ticket: React.FC<TicketProps> = ({ show, onClose, content, currentStopName, destinationStopName }) => {
     const scroll = true;
     const backdrop = false;
 
@@ -31,10 +31,7 @@ type ContentProps = {
         <p><strong>Bus:</strong> {content.name}</p>
         <p><strong>Arrives:</strong> {content.eta}</p>
         {/* {content.details && <p><strong>Details:</strong> {content.details}</p>} */}
-
-        {/* TODO: make responsive from not just SEC | pass current and destination as props */}
-
-        <ModalBody currentStopName={} destinationStopName={} />
+        <ModalBody currentStopName={currentStopName} destinationStopName={destinationStopName} />
       </Offcanvas.Body>
     </Offcanvas>
   );

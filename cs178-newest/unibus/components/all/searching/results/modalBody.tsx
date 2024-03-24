@@ -11,8 +11,7 @@ export default function ModalBody({ currentStopName, destinationStopName }: Moda
   useEffect(() => {
     const fetchStopsAndTimes = async () => {
       // Assuming there's an API endpoint to get the stops between current and destination
-      const response = await fetch(`/api/getStopsBetween?current=${currentStopName}&destination=${destinationStopName}`);
-      if (!response.ok) {
+      const response = await fetch(`/api/getStopsBetween?currentStopName=${encodeURIComponent(currentStopName)}&destinationStopName=${encodeURIComponent(destinationStopName)}`);      if (!response.ok) {
         throw new Error('Failed to fetch stops');
       }
       const stopsData = await response.json();
@@ -23,7 +22,7 @@ export default function ModalBody({ currentStopName, destinationStopName }: Moda
         }
         const etaData = await etaResponse.json();
         const currentTime = Date.now();
-        const timeDifference = Math.round((etaData.eta - currentTime) / 60000); // Convert milliseconds to minutes
+        const timeDifference = Math.round((etaData.eta - currentTime) / 60000);
         return {
           name: stop.name,
           time: `${timeDifference} mins`

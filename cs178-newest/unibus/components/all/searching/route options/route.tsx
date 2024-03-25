@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import AlertButton from "../alertButton";
 import Ticket from "../results/ticket";
 
 interface ShuttleOptions {
@@ -107,7 +106,7 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
           .sort((a, b) => {
             const timeA = a.eta !== 'Unknown' ? new Date(a.eta).getTime() : Number.MAX_SAFE_INTEGER;
             const timeB = b.eta !== 'Unknown' ? new Date(b.eta).getTime() : Number.MAX_SAFE_INTEGER;
-            return timeA - timeB;
+            return timeA - timeB; // Change the sort order to show the soonest shuttles at the top
           })
           .slice(0, 3);
         console.log('Relevant updates after sorting and slicing', relevantUpdates);
@@ -137,7 +136,6 @@ export default function ShuttleInfo({ stopName }: ShuttleProps) {
               <p><strong>Name:</strong> {option.name}</p>
               <p><strong>ETA:</strong> {option.eta}</p>
               <p><strong>Details:</strong> {option.details}</p>
-              <AlertButton />
             </button>
           ))}
         </div>
